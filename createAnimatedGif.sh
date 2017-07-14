@@ -4,7 +4,7 @@ set -e
 
 if [ -e animation.gif ]; then
     echo "Error: animation.gif already exists."
-    exit
+    exit -1
 fi
 
 TEMPDIR=/tmp/createAnimatedGif_$$

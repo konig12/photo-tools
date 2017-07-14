@@ -4,11 +4,11 @@ DIR=$1
 
 if [ x$DIR == x"" ]; then
     echo "Usage: autoPano.sh [dir]"
-    exit
+    exit -1
 fi
 if [ ! -d $DIR ]; then
     echo "Directory $DIR does not exist."
-    exit
+    exit -2
 fi
 echo "Processing directory $DIR"
 
