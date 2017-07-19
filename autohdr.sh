@@ -19,7 +19,7 @@ echo "creating '$OUTPUT_FILE'..."
 NUM_IMAGES=$(ls $DIR/*.JPG -l | wc -l)
 
 
-pto_gen $DIR/*.JPG -o -s $NUM_IMAGES $OUTPUT_FILE #-s to set stacks to avoid "enblend: excessive overlap detected" in the event that it can't automaticly detect stacks. But not -l so we don't link positions
+pto_gen $DIR/*.JPG -s $NUM_IMAGES -o $OUTPUT_FILE #-s to set stacks to avoid "enblend: excessive overlap detected" in the event that it can't automaticly detect stacks. But not -l so we don't link positions
 cpfind -o $OUTPUT_FILE $OUTPUT_FILE 
 cpclean -o $OUTPUT_FILE $OUTPUT_FILE 
 autooptimiser -p -o $OUTPUT_FILE $OUTPUT_FILE 
