@@ -28,7 +28,8 @@ fi
 echo "Processing directory $DIR"
 
 # generate the project name from the first input file name
-OUTPUT_FILE=$(ls $DIR/*.JPG | head -n 1 | sed -e 's/\.JPG$/_hdr.pto/')
+BASE_NAME=$(ls $DIR/*.JPG | head -n 1 | sed -e 's/\.JPG$//')
+OUTPUT_FILE=$BASE_NAME'_hdr.pto'
 echo "creating '$OUTPUT_FILE'..."
 
 # Pass the stack size to pto_gen if needed
@@ -46,3 +47,5 @@ autooptimiser -p -o $OUTPUT_FILE $OUTPUT_FILE
 pano_modify -o $OUTPUT_FILE -p 0 --ldr-file=JPG --output-type=BF $OUTPUT_FILE
 pano_modify -o $OUTPUT_FILE --fov=AUTO --canvas=AUTO --crop=AUTO $OUTPUT_FILE
 
+# add it to the batch processer
+PTBatcherGUI $OUTPUT_FILE $BASE_NAME
