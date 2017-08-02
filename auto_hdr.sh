@@ -48,5 +48,5 @@ pano_modify -o $OUTPUT_FILE -p 0 --ldr-file=JPG --output-type=BF $OUTPUT_FILE
 pano_modify -o $OUTPUT_FILE --fov=AUTO --canvas=AUTO --crop=AUTO $OUTPUT_FILE
 
 # add it to the batch processer
-nohup PTBatcherGUI $OUTPUT_FILE $BASE_NAME &
+nohup PTBatcherGUI $OUTPUT_FILE $BASE_NAME >/dev/null 2>&1 &
 
