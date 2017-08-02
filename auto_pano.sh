@@ -28,8 +28,8 @@ fi
 echo "Processing directory $DIR"
 
 # generate the project name from the first input file name
-BASE_NAME=$(ls $DIR/*.JPG | head -n 1 | sed -e 's/\.JPG$//')
-OUTPUT_FILE=$BASE_NAME'_pano.pto'
+BASE_NAME=$(ls $DIR/*.JPG | head -n 1 | sed -e 's/\.JPG$/_pano/')
+OUTPUT_FILE=$BASE_NAME'.pto'
 echo "creating '$OUTPUT_FILE'..."
 
 # Pass the stack size to pto_gen if needed
