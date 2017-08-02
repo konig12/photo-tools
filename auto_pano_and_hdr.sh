@@ -22,4 +22,6 @@ else
     find ./ -name 'pano*' -print0 | xargs -0 -P $NUM_PROCS -I% $SCRIPTS_DIR/auto_pano.sh %
 fi
 
+#Start stiching
+nohup PTBatcherGUI -b >/dev/null 2>&1 &
 
