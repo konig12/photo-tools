@@ -49,5 +49,5 @@ pano_modify -o $OUTPUT_FILE --output-type=BF $OUTPUT_FILE
 pano_modify -o $OUTPUT_FILE --center --straighten --canvas=AUTO --crop=AUTO $OUTPUT_FILE
 
 # add it to the batch processer
-PTBatcherGUI $OUTPUT_FILE $BASE_NAME
+nohup PTBatcherGUI $OUTPUT_FILE $BASE_NAME &
 
