@@ -2,12 +2,12 @@
 
 DIR=
 STACK_SIZE=
-while getopts s: opt
+while getopts hs: opt
 do
     case "$opt" in
-        s) STACKSIZE=$OPTARG;;
-        \?) # unknown flag
-            echo >&2 "Usage: auto_hdr.sh [-s] dir"
+        s) STACK_SIZE=$OPTARG;;
+        h|\?) # unknown flag
+            echo >&2 "Usage: auto_hdr.sh [-s] [-h] dir"
             exit 1;;
     esac
 done
@@ -17,7 +17,7 @@ shift $((OPTIND-1))
 DIR=$1
 
 if [ x$DIR == x"" ]; then
-    echo >&2 "Usage: auto_hdr.sh [-s] dir"
+    echo >&2 "Usage: auto_hdr.sh [-s] [-h] dir"
     echo >&2 "    No directory provided"
     exit 2
 fi
@@ -49,3 +49,4 @@ pano_modify -o $OUTPUT_FILE --fov=AUTO --canvas=AUTO --crop=AUTO $OUTPUT_FILE
 
 # add it to the batch processer
 PTBatcherGUI $OUTPUT_FILE $BASE_NAME
+
