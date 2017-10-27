@@ -1,6 +1,5 @@
 function fixImage( image , pts)
-%FIXIMAGE Summary of this function goes here
-%   Detailed explanation goes here
+%FIXIMAGE Correct the stuck pixels of the specified image.
 
 data = double(imread(image))/256;
 
