@@ -1,5 +1,6 @@
 function [ pts ] = getPoints( I )
 %GETPOINTS Get the points to remove from a large image
+%    The resulting format is a 2xn matrix of pixel coordinates
 
 [r, c, ~] = size(I);
 max_rows = 800;
