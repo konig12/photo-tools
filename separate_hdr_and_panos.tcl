@@ -14,7 +14,7 @@ exec tclsh "$0" "$@"
 set DIR ./
 
 set images [glob $DIR/*.JPG]
-set panoCutoff 3
+set panoCutoff 5
 
 set AEBNameAndTime {}
 
