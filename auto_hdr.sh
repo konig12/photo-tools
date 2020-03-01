@@ -50,7 +50,7 @@ cpclean -o "$OUTPUT_FILE" "$OUTPUT_FILE"
 autooptimiser -p -o "$OUTPUT_FILE" "$OUTPUT_FILE" 
 
 # -p 0 => rectaliniar projection
-pano_modify -o "$OUTPUT_FILE" -p 0 --ldr-file=JPG --output-type=BF "$OUTPUT_FILE"
+pano_modify -o "$OUTPUT_FILE" -p 0 --ldr-file=JPG --ldr-compression=95 --output-type=BF "$OUTPUT_FILE"
 pano_modify -o "$OUTPUT_FILE" --fov=AUTO --canvas=AUTO --crop=AUTO "$OUTPUT_FILE"
 
 # add it to the batch processer

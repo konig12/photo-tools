@@ -45,7 +45,7 @@ autooptimiser -a -l -s -o "$OUTPUT_FILE" "$OUTPUT_FILE"
 
 # -p 0 => rectaliniar projection
 #pano_modify -o "$OUTPUT_FILE" -p 0 --ldr-file=JPG --output-type=BF "$OUTPUT_FILE"
-pano_modify -o "$OUTPUT_FILE" --output-type=BF "$OUTPUT_FILE"
+pano_modify -o "$OUTPUT_FILE" --ldr-file=JPG --ldr-compression=95 --output-type=BF "$OUTPUT_FILE"
 pano_modify -o "$OUTPUT_FILE" --center --straighten --canvas=AUTO --crop=AUTO "$OUTPUT_FILE"
 
 # add it to the batch processer
