@@ -7,14 +7,29 @@ exec tclsh "$0" "$@"
 # interested in are bracketed. Therefore, this script looks for all bracketed images
 # and puts any which do not occur too close together in time into new hdr## directories,
 # while the rest are pulled into pano## directories.
-#
-# xxx Pano portion is not yet done.
 
+set DIR [lindex $argv 0]
+if {[string length $DIR] == 0} {
+    set DIR ./
+}
 
-set DIR ./
+set MODE "both"
+if {[llength $argv] > 1} {
+    set MODE [lindex $argv 1]
+    if {$MODE != "pano" && $MODE != "hdr" && $MODE != "both"} {
+        puts "Bad bracket type specifified."
+        puts " Usage:"
+        puts "   separate_hdr_and_panos.tcl <directory> \[hdr|pano|both]"
+        exit
+    }
+}
 
-set images [glob $DIR/*.JPG]
+set images [glob $DIR/IMG_*.JPG]
 set panoCutoff 5
+
+if {$MODE == "pano"} {
+    set panoCutoff 10
+}
 
 set AEBNameAndTime {}
 
@@ -24,6 +39,8 @@ foreach image $images {
     set exifData [exec exiftool -BracketMode -AEBBracketValue -CreateDate $image]
     set lines [split $exifData "\n"]
     set values {}
+
+    puts $exifData
 
     foreach line $lines {
         set cutoffPoint [string first ":" $line]
@@ -42,16 +59,22 @@ foreach image $images {
     set AEBValue [expr "1.0*[lindex $values 1]"]
     set time [clock scan [lindex $values 2] -format "%Y:%m:%d %T"]
 
-    # Save away the information about all of the bracketed shots.
+    # Save away the information about all of the bracketed shots. The info we
+    # need for later is the bracket value, name, and time. We create a fourth
+    # value which combines the time and image number to give us a way to sort.
+    # Ideally we could use one or the other, but wrapped image names cause
+    # problems for name based sorts, and very close times cause issues for time
+    # based sorts.
     if {$bracketed} {
-        lappend AEBNameAndTime [list $AEBValue $image $time]
+        regexp {IMG_([0-9]+).JPG} $image match imageIndex
+        lappend AEBNameAndTime [list $AEBValue $image $time $time$imageIndex]
     }
 }
 
 # Sort the images chronologically to fix any mis-ordered images. This happens
 # when the glob sort based on file names does not match the times. Number wrapping
 # is to blame here.
-set AEBNameAndTime [lsort -integer -index 2 $AEBNameAndTime]
+set AEBNameAndTime [lsort -integer -index 3 $AEBNameAndTime]
 
 # Now that we have the data for the bracketed images, we organize the brackets into
 # sets and grab the starting and ending timestamps for the sets.
@@ -73,11 +96,19 @@ while {$end < [llength $AEBNameAndTime]} {
         incr end
     }
 
-    lappend nameSets $currentNames
-    lappend timeBrackets $currentTimes
+    # It is possible to have a single image which was shot as the first of a bracketed set,
+    # but then had the bracketing aborted through something like a camera power cycle. In this
+    # case we do not consider this to be a bracket after all.
+    if {[llength $currentNames] > 1} {
+        lappend nameSets $currentNames
+        lappend timeBrackets $currentTimes
+    }
 }
 
-# No find runs of these brackets which occur close together in time. Determine if they are
+#puts $nameSets
+#puts $timeBrackets
+
+# Now find runs of these brackets which occur close together in time. Determine if they are
 # panos or HDRs, and move the files.
 
 set end 0
@@ -94,7 +125,7 @@ while {$end < [llength $nameSets]} {
 
     if {$end < [llength $nameSets]} {
         set timeGap [expr [lindex $timeBrackets $end 0]-[lindex $timeBrackets $end-1 1]]
-        while {$timeGap < $panoCutoff && $end < [llength $nameSets]} {
+        while {$MODE != "hdr" && $timeGap < $panoCutoff && $end < [llength $nameSets]} {
             # Add the names from this bracket to the set we are currently building.
             lappend namesInSet {*}[lindex $nameSets $end]
 
@@ -103,7 +134,7 @@ while {$end < [llength $nameSets]} {
         }
     }
 
-    puts "$start $end"
+    #puts "$start $end"
     if {$end <= [expr $start+1]} {
         # There was only one bracket in this set. It must be an HDR.
         set dirName [format "hdr%02d" $hdrNumber]
@@ -114,9 +145,14 @@ while {$end < [llength $nameSets]} {
         incr panoNumber
     }
 
-    puts "Creating $dirName..."
-    exec mkdir $dirName
-    puts "moving files: $namesInSet..."
-    exec mv {*}$namesInSet $dirName
+    set globNames {}
+    for {set i 0} {$i < [llength $namesInSet]} {incr i} {
+        lappend globNames {*}[glob "[file rootname [lindex $namesInSet $i]].*"]
+    }
+
+    puts "Creating $DIR/$dirName..."
+    exec mkdir $DIR/$dirName
+    puts "moving files: $globNames..."
+    exec mv {*}$globNames $DIR/$dirName
 }
 
